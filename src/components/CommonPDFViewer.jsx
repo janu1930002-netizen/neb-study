@@ -1,6 +1,17 @@
+
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
+import { Document, Page, pdfjs } from "react-pdf";
+
+import "react-pdf/dist/Page/AnnotationLayer.css";
+import "react-pdf/dist/Page/TextLayer.css";
+
+// Configure PDF.js worker
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  "pdfjs-dist/build/pdf.worker.min.mjs",
+  import.meta.url
+).toString();
 
 export default function CommonPDFViewer({ type, id, query = {} }) {
   const [pdfUrl, setPdfUrl] = useState("");
@@ -9,12 +20,15 @@ export default function CommonPDFViewer({ type, id, query = {} }) {
   const [error, setError] = useState("");
   const [retryCount, setRetryCount] = useState(0);
 
-  // PDF controls
+  const [numPages, setNumPages] = useState(0);
   const [zoom, setZoom] = useState(100);
+  const [containerWidth, setContainerWidth] = useState(0);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const viewerRef = useRef(null);
+  const contentRef = useRef(null);
 
+  // Load PDF from API
   useEffect(() => {
     let cancelled = false;
     let objectUrl = null;
@@ -23,6 +37,7 @@ export default function CommonPDFViewer({ type, id, query = {} }) {
       try {
         setLoading(true);
         setError("");
+        setNumPages(0);
         setPdfUrl("");
         setFilename("Loading document...");
 
@@ -78,29 +93,23 @@ export default function CommonPDFViewer({ type, id, query = {} }) {
           throw new Error("PDF file is empty.");
         }
 
-        // Validate PDF signature
+        // Verify PDF signature
         const signature = await blob.slice(0, 5).text();
 
         if (signature !== "%PDF-") {
           throw new Error("The server did not return a valid PDF.");
         }
 
-        // Read original filename
         let name = `${type}-${id}.pdf`;
 
         const disposition = response.headers.get("Content-Disposition");
 
         if (disposition) {
-          const encoded = disposition.match(/filename\*=UTF-8''([^;]+)/i);
-          const regular = disposition.match(/filename="?([^";]+)"?/i);
+          const match = disposition.match(/filename="?([^";]+)"?/i);
 
-          try {
-            if (encoded) {
-              name = decodeURIComponent(encoded[1]);
-            } else if (regular) {
-              name = regular[1];
-            }
-          } catch {}
+          if (match) {
+            name = match[1];
+          }
         }
 
         if (!name.toLowerCase().endsWith(".pdf")) {
@@ -116,7 +125,6 @@ export default function CommonPDFViewer({ type, id, query = {} }) {
 
         setFilename(name);
         setPdfUrl(objectUrl);
-
       } catch (err) {
         if (!cancelled) {
           console.error("PDF loading error:", err);
@@ -138,28 +146,52 @@ export default function CommonPDFViewer({ type, id, query = {} }) {
         URL.revokeObjectURL(objectUrl);
       }
     };
-  }, [
-    type,
-    id,
-    query.className,
-    query.subjectName,
-    retryCount,
-  ]);
+  }, [type, id, query.className, query.subjectName, retryCount]);
+
+  // Measure available viewer width
+  useEffect(() => {
+    const element = contentRef.current;
+
+    if (!element) return;
+
+    const observer = new ResizeObserver((entries) => {
+      const width = entries[0]?.contentRect.width;
+
+      if (width) {
+        setContainerWidth(width);
+      }
+    });
+
+    observer.observe(element);
+
+    return () => observer.disconnect();
+  }, []);
+
+  // PDF loading success
+  const onDocumentLoadSuccess = useCallback(({ numPages }) => {
+    setNumPages(numPages);
+    setError("");
+  }, []);
+
+  const onDocumentLoadError = useCallback((err) => {
+    console.error("PDF.js rendering error:", err);
+    setError("Unable to render this PDF. Please try again.");
+  }, []);
 
   // Zoom controls
   const zoomIn = () => {
-    setZoom((previous) => Math.min(previous + 10, 200));
+    setZoom((value) => Math.min(value + 10, 200));
   };
 
   const zoomOut = () => {
-    setZoom((previous) => Math.max(previous - 10, 50));
+    setZoom((value) => Math.max(value - 10, 50));
   };
 
   const resetZoom = () => {
     setZoom(100);
   };
 
-  // Fullscreen control
+  // Fullscreen
   const toggleFullscreen = async () => {
     try {
       if (!document.fullscreenElement) {
@@ -172,7 +204,6 @@ export default function CommonPDFViewer({ type, id, query = {} }) {
     }
   };
 
-  // Track fullscreen changes, including Escape key
   useEffect(() => {
     const handleFullscreenChange = () => {
       setIsFullscreen(Boolean(document.fullscreenElement));
@@ -188,6 +219,10 @@ export default function CommonPDFViewer({ type, id, query = {} }) {
     };
   }, []);
 
+  const pageWidth = containerWidth
+    ? Math.max(250, Math.floor((containerWidth - 24) * zoom / 100))
+    : undefined;
+
   return (
     <div
       ref={viewerRef}
@@ -195,132 +230,124 @@ export default function CommonPDFViewer({ type, id, query = {} }) {
         isFullscreen ? "h-screen w-screen" : "min-h-screen"
       }`}
     >
-      {/* PDF Header and Controls */}
-      <div className="z-10 flex min-h-14 flex-wrap items-center justify-between gap-3 border-b border-gray-300 bg-white px-3 py-2 shadow-sm dark:border-gray-700 dark:bg-gray-900 sm:px-5">
-
-        {/* PDF Filename */}
+      {/* Toolbar */}
+      <div className="sticky top-0 z-20 flex flex-wrap items-center justify-between gap-3 border-b border-gray-300 bg-white px-3 py-3 shadow-sm dark:border-gray-700 dark:bg-gray-900 sm:px-5">
         <div className="min-w-0 flex-1">
           <h2 className="truncate text-sm font-semibold text-gray-800 dark:text-white">
             {filename}
           </h2>
+
+          {numPages > 0 && (
+            <p className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              {numPages} PDF pages
+            </p>
+          )}
         </div>
 
-        {/* PDF Toolbar */}
         <div className="flex shrink-0 items-center gap-2">
-
-          {/* Zoom Out */}
           <button
             type="button"
             onClick={zoomOut}
             disabled={zoom <= 50 || loading || !!error}
-            title="Zoom Out"
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-300 bg-gray-50 text-xl font-bold text-gray-700 hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
+            className="h-10 w-10 rounded-lg border border-gray-300 bg-gray-100 text-xl font-bold dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+            aria-label="Zoom out"
           >
             −
           </button>
 
-          {/* Zoom Percentage / Reset */}
           <button
             type="button"
             onClick={resetZoom}
             disabled={loading || !!error}
-            title="Reset Zoom"
-            className="min-w-[60px] rounded-lg border border-gray-300 bg-gray-50 px-2 py-2 text-xs font-semibold text-gray-700 hover:bg-gray-200 disabled:opacity-40 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
+            className="min-w-16 rounded-lg border border-gray-300 bg-gray-100 px-3 py-2 text-sm font-semibold dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+            title="Reset zoom"
           >
             {zoom}%
           </button>
 
-          {/* Zoom In */}
           <button
             type="button"
             onClick={zoomIn}
             disabled={zoom >= 200 || loading || !!error}
-            title="Zoom In"
-            className="flex h-9 w-9 items-center justify-center rounded-lg border border-gray-300 bg-gray-50 text-xl font-bold text-gray-700 hover:bg-gray-200 disabled:cursor-not-allowed disabled:opacity-40 dark:border-gray-600 dark:bg-gray-800 dark:text-white dark:hover:bg-gray-700"
+            className="h-10 w-10 rounded-lg border border-gray-300 bg-gray-100 text-xl font-bold dark:border-gray-600 dark:bg-gray-800 dark:text-white"
+            aria-label="Zoom in"
           >
             +
           </button>
 
-          {/* Fullscreen */}
           <button
             type="button"
             onClick={toggleFullscreen}
-            title={isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
-            className="flex h-9 items-center gap-2 rounded-lg bg-blue-700 px-3 text-sm font-medium text-white transition hover:bg-blue-800"
+            className="h-10 rounded-lg bg-blue-700 px-3 text-white hover:bg-blue-800"
+            title="Toggle fullscreen"
           >
-            {isFullscreen ? (
-              <>
-                <span>⛶</span>
-                <span className="hidden sm:inline">Exit</span>
-              </>
-            ) : (
-              <>
-                <span>⛶</span>
-                <span className="hidden sm:inline">Fullscreen</span>
-              </>
-            )}
+            ⛶
           </button>
-
         </div>
       </div>
 
       {/* PDF Content */}
-      <main className="relative flex-1 overflow-auto bg-gray-200 dark:bg-gray-800">
-
-        {/* Loading */}
+      <main
+        ref={contentRef}
+        className="flex-1 overflow-auto bg-gray-200 px-2 py-4 dark:bg-gray-800 sm:px-5"
+      >
         {loading && (
-          <div className="flex min-h-[80vh] flex-col items-center justify-center text-gray-600 dark:text-gray-300">
-            <div className="mb-3 h-10 w-10 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
-            <p className="text-sm font-medium">
+          <div className="flex min-h-[70vh] flex-col items-center justify-center">
+            <div className="mb-4 h-10 w-10 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+            <p className="text-sm text-gray-600 dark:text-gray-300">
               Loading PDF...
             </p>
           </div>
         )}
 
-        {/* Error */}
         {error && (
-          <div className="flex min-h-[80vh] flex-col items-center justify-center p-5 text-center">
-            <p className="mb-4 font-medium text-red-600">
-              {error}
-            </p>
+          <div className="flex min-h-[70vh] flex-col items-center justify-center text-center">
+            <p className="mb-4 text-red-600">{error}</p>
 
             <button
               type="button"
-              onClick={() => setRetryCount((count) => count + 1)}
-              className="rounded-lg bg-blue-700 px-5 py-2 text-white transition hover:bg-blue-800"
+              onClick={() => setRetryCount((value) => value + 1)}
+              className="rounded-lg bg-blue-700 px-6 py-3 text-white"
             >
               Retry
             </button>
           </div>
         )}
 
-        {/* Native Browser PDF Viewer */}
-        {pdfUrl && !loading && !error && (
-          <div
-            className="min-h-full w-full overflow-auto"
-            style={{
-              minHeight: isFullscreen ? "calc(100vh - 56px)" : "calc(100vh - 56px)",
-            }}
+        {pdfUrl && !error && (
+          <Document
+            file={pdfUrl}
+            onLoadSuccess={onDocumentLoadSuccess}
+            onLoadError={onDocumentLoadError}
+            loading={
+              <div className="flex min-h-[60vh] items-center justify-center">
+                <p className="text-gray-600 dark:text-white">
+                  Rendering PDF pages...
+                </p>
+              </div>
+            }
+            className="flex flex-col items-center gap-5"
           >
-            <div
-              className="origin-top-left"
-              style={{
-                width: `${10000 / zoom}%`,
-                height: `${10000 / zoom}%`,
-                transform: `scale(${zoom / 100})`,
-                transformOrigin: "top left",
-              }}
-            >
-              <iframe
-                key={pdfUrl}
-                src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=1`}
-                title={filename}
-                className="h-[calc(100vh-56px)] min-h-[600px] w-full border-0 bg-white"
-              />
-            </div>
-          </div>
+            {Array.from({ length: numPages }, (_, index) => (
+              <div
+                key={`page-${index + 1}`}
+                className="max-w-full overflow-hidden rounded-sm bg-white shadow-lg"
+              >
+                <Page
+                  pageNumber={index + 1}
+                  width={pageWidth}
+                  renderTextLayer={true}
+                  renderAnnotationLayer={true}
+                  loading={
+                    <div className="flex min-h-96 items-center justify-center">
+                      Loading page {index + 1}...
+                    </div>
+                  }
+                />
+              </div>
+            ))}
+          </Document>
         )}
-
       </main>
     </div>
   );
