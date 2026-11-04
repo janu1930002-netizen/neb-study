@@ -46,3 +46,4 @@ out/
 .env.local
 .env.production
 *.log
+*.backup
