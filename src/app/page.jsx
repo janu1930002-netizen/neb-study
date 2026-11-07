@@ -49,7 +49,7 @@ const DEVELOPERS = [
       "Next.js",
       "Python",
       "Machine Learning",
-      "Kivy",
+      "Kivy","Programming","Web Development","AI and Automattion","Experiments and Tools",
     ],
 
     contributions: [
@@ -63,9 +63,35 @@ const DEVELOPERS = [
     whatsapp: "9779815734883",
     email: "janu193000@gmail.com",
   },
+ {
+    id: 2,
+    name: "Ajit Yadav",
+    role: "Developer",
+    image: "/ram.jpg",
+    bio: "I enjoy building useful applications that make learning easier, more organized, and accessible to students.",
+
+    skills: [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "React",
+      "Next.js",
+    ],
+
+    contributions: [
+      "Application design and development",
+      "Responsive user interface",
+      "Continuous improvements and updates",
+    ],
+
+    facebook: "https://www.facebook.com/share/1CEnbtNYzL/",
+    instagram: "https://www.instagram.com/ramkumar12349763/",
+    whatsapp: "9779819612973",
+    email: "moneyheist.u@gmail.com",
+  },
 
   {
-    id: 2,
+    id: 3,
     name: "Siyaram Yadav",
     role: "Resource Provider",
     image: "/siyaram.jpeg",
@@ -92,7 +118,7 @@ const DEVELOPERS = [
   },
 
   {
-    id: 3,
+    id: 4,
     name: "Mithlesh Kapar",
     role: "Resource Manager",
     image: "/mithlesh.jpeg",
@@ -102,7 +128,7 @@ const DEVELOPERS = [
       "HTML",
       "CSS",
       "JavaScript",
-      "React",
+      "React","Programming","Web Development","AI and Automattion","Experiments and Tools",
     ],
 
     contributions: [
@@ -120,7 +146,7 @@ const DEVELOPERS = [
   },
 
   {
-    id: 4,
+    id: 5,
     name: "Prem Prakash Yadav",
     role: "Resource Provider",
     image: "/prem.jpeg",
@@ -142,6 +168,102 @@ const DEVELOPERS = [
     instagram: "",
     whatsapp: "9779827715545",
     email: "thepremydv@gmail.com",
+  },
+    {
+    id: 6,
+    name: "Lokendra Manadal",
+    role: "Resource Provider",
+    image: "/lokendra.jpeg",
+    bio: "I enjoy building useful resources that make learning easier, more organized, and accessible to students.",
+
+    skills: [
+      "High level knowledge of Chemistry",
+    ],
+
+    contributions: [
+      "Responsible for providing educational resources",
+      "Provides computer notes, books, and question papers",
+      "Provides syllabuses and other study materials",
+      "Supports students with useful learning resources",
+      "Helps maintain relevant and updated educational content",
+    ],
+
+    facebook: "https://www.facebook.com/lokendra.mandal.14",
+    instagram: "",
+    whatsapp: "9779810258566",
+    email: "",
+  },
+  {
+    id: 7,
+    name: "Santosh Sah",
+    role: "Resource Provider",
+    image: "/santosh.jpeg",
+    bio: "I enjoy building useful resources that make learning easier, more organized, and accessible to students.",
+
+    skills: [
+     "Programming","Web Development","AI and Automattion","Experiments and Tools","Graphics design ","Networking"
+,"Electronic Circuit......"
+    ],
+
+    contributions: [
+      "Responsible for providing educational resources",
+      "Provides computer notes, books, and question papers",
+      "Provides syllabuses and other study materials",
+      "Supports students with useful learning resources",
+      "Helps maintain relevant and updated educational content",
+    ],
+
+    facebook: "https://www.facebook.com/sant.sh.sah.216355",
+    instagram: "",
+    whatsapp: "9779807710402",
+    email: "sahsantosh160@gmail.com",
+  },
+  {
+    id: 8,
+    name: "Bivash Chandra Yadav",
+    role: "Resource Provider",
+    image: "/bivash.jpeg",
+    bio: "I enjoy building useful resources that make learning easier, more organized, and accessible to students.",
+
+    skills: [
+     "Programming","Web Development","Computer Hardware Repair and Maintenance.","Projects handling ","Office Package (Word, excel, PowerPoint)",],
+
+    contributions: [
+      "Responsible for providing educational resources",
+      "Provides computer notes, books, and question papers",
+      "Provides syllabuses and other study materials",
+      "Supports students with useful learning resources",
+      "Helps maintain relevant and updated educational content",
+    ],
+
+    facebook:"https://www.facebook.com/smiley.bivash.2025",
+    instagram: "",
+    whatsapp: "9779805934223",
+    email: "smileybivash@gmail.com",
+  },
+  {
+    id: 9,
+    name: "Santosh Kumar Yadav",
+    role: "Resource Provider",
+    image: "/bivash.jpeg",
+    bio: "I enjoy building useful resources that make learning easier, more organized, and accessible to students.",
+
+    skills: [
+     "Programming","Web Development","AI and Automattion","Experiments and Tools","Java Programming and projects","Computer Hardware ","Computer Lab Management",
+    ],
+
+    contributions: [
+      "Responsible for providing educational resources",
+      "Provides computer notes, books, and question papers",
+      "Provides syllabuses and other study materials",
+      "Supports students with useful learning resources",
+      "Helps maintain relevant and updated educational content",
+    ],
+
+    facebook:"https://www.facebook.com/lakhindar.mahato.73",
+    instagram: "",
+    whatsapp: "977974-6606067",
+    email: "",
   },
 ];
 
