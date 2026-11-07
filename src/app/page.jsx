@@ -36,7 +36,7 @@ const APP = {
 const DEVELOPERS = [
   {
     id: 1,
-    name: "Ram Kumar Yadav",
+    name: "Ram  Yadav",
     role: "Lead Developer & Creator of Neb Study",
     image: "/ram.jpg",
     bio: "I enjoy building useful applications that make learning easier, more organized, and accessible to students.",
