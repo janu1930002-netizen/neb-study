@@ -67,7 +67,7 @@ const DEVELOPERS = [
     id: 2,
     name: "Ajit Yadav",
     role: "Developer",
-    image: "/ram.jpg",
+    image: "/ajit.jpg",
     bio: "I enjoy building useful applications that make learning easier, more organized, and accessible to students.",
 
     skills: [
@@ -93,7 +93,7 @@ const DEVELOPERS = [
   {
     id: 3,
     name: "Siyaram Yadav",
-    role: "Resource Provider",
+    role: "Resource Provider and Teacher",
     image: "/siyaram.jpeg",
     bio: "I enjoy building useful resources that make learning easier, more organized, and accessible to students.",
 
@@ -120,7 +120,7 @@ const DEVELOPERS = [
   {
     id: 4,
     name: "Mithlesh Kapar",
-    role: "Resource Manager",
+    role: "Resource Manager and Teacher",
     image: "/mithlesh.jpeg",
     bio: "I enjoy building useful resources that make learning easier, more organized, and accessible to students.",
 
@@ -148,7 +148,7 @@ const DEVELOPERS = [
   {
     id: 5,
     name: "Prem Prakash Yadav",
-    role: "Resource Provider",
+    role: "Resource Provider and Teacher",
     image: "/prem.jpeg",
     bio: "I enjoy building useful resources that make learning easier, more organized, and accessible to students.",
 
@@ -172,7 +172,7 @@ const DEVELOPERS = [
     {
     id: 6,
     name: "Lokendra Manadal",
-    role: "Resource Provider",
+    role: "Resource Provider and Teacher",
     image: "/lokendra.jpeg",
     bio: "I enjoy building useful resources that make learning easier, more organized, and accessible to students.",
 
@@ -196,7 +196,7 @@ const DEVELOPERS = [
   {
     id: 7,
     name: "Santosh Sah",
-    role: "Resource Provider",
+    role: "Resource Provider and Teacher",
     image: "/santosh.jpeg",
     bio: "I enjoy building useful resources that make learning easier, more organized, and accessible to students.",
 
@@ -221,7 +221,7 @@ const DEVELOPERS = [
   {
     id: 8,
     name: "Bivash Chandra Yadav",
-    role: "Resource Provider",
+    role: "Resource Provider and Teacher",
     image: "/bivash.jpeg",
     bio: "I enjoy building useful resources that make learning easier, more organized, and accessible to students.",
 
@@ -245,7 +245,7 @@ const DEVELOPERS = [
     id: 9,
     name: "Santosh Kumar Yadav",
     role: "Resource Provider",
-    image: "/bivash.jpeg",
+    image: "/santosh2.jpeg",
     bio: "I enjoy building useful resources that make learning easier, more organized, and accessible to students.",
 
     skills: [
