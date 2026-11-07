@@ -67,7 +67,7 @@ const DEVELOPERS = [
     id: 2,
     name: "Ajit Yadav",
     role: "Developer",
-    image: "/ajit.jpg",
+    image: "/ajit.jpeg",
     bio: "I enjoy building useful applications that make learning easier, more organized, and accessible to students.",
 
     skills: [
